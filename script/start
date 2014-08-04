@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+require 'porker'
+
+Porker.config.env = ARGV[0] == 'production' ? 'production' : 'development'
+
+puts "Starting Porker in #{Porker.env} mode."
+Porker.logger.info "Starting Porker in #{Porker.env} mode."
+
+@bot = Porker::Bot.create
+@bot.start
