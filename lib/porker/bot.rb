@@ -36,7 +36,8 @@ HELP
 
         on :channel, /^[^!]/ do |m|
           Porker::Markovator.store(m.message)
-          m.reply Porker::Markovator.sentence if 0 == 0 #rand(20) == 0
+          response = Porker::Markovator.respond(m.message)
+          m.reply response unless response.nil?
         end
 
         on :private, "!redeploy" do |m|
@@ -45,10 +46,14 @@ HELP
           exit
         end
 
+        on :channel, "!reset" do |m|
+          Porker::Transition.clear!
+        end
+
         on :channel, /^!(markov|porker)/ do |m|
           message = m.message.strip
           if ["!markov","!porker"].include?(m)
-            m.reply Porker::Markovator.sentence
+            m.reply Porker::Markovator.respond
           else
             m.reply Porker::Markovator.command(message)
           end

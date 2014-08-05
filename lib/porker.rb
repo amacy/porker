@@ -4,6 +4,9 @@ module Porker
   autoload :Bot,        'porker/bot'
   autoload :Markovator, 'porker/markovator'
   autoload :Config,     'porker/config'
+  autoload :Sentence,   'porker/sentence'
+  autoload :Transition, 'porker/transition'
+  autoload :Word,       'porker/word'
 
   def self.env
     config.env
