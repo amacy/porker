@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.name          = "porker"
   spec.version       = Porker::VERSION
   spec.authors       = ["Beau Harrington", "Matthew Werner"]
-  spec.email         = ["m@mjw.io"]
+  spec.email         = ['bohford@gmail.com', "m@mjw.io"]
   spec.summary       = 'duhrhrh'
   spec.description   = 'duhrhrh'
   spec.homepage      = ""
