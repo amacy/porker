@@ -1,8 +1,5 @@
 module Porker
   class Markovator
-
-    MAXIMUM_SENTENCE_LENGTH  = 50
-
     class << self
 
       def store(line)
@@ -28,35 +25,39 @@ module Porker
         Porker::Markovator.respond(word)
       end
 
-      def respond(seed = nil, always_return_sentence = false)
+      def respond(seed = nil, always_return_sentence = false, threshold=1.0)
+        Porker.logger.info("Heard: #{seed}")
+        always_return_sentence = true if seed.split.include?('pork')
         word = Word.new((seed && seed.split.sample) || Transition.seed)
         return Sentence.failure if word.blank?
 
         sentence = Sentence.new(word)
         # make sure this word isn't a dead end
-        second_word = Transition.next(word, true)
-        if second_word.blank?
-          second_word.never_follows word if (seed == '' || seed.nil?) #repair corpus
+        followup = Transition.next(word, true)
+        if followup.blank? || followup.end?
+          if seed.nil? || seed == ''
+            followup.never_follows word  #repair corpus
+          end
 
-          if (seed == '' || seed.nil?) || always_return_sentence
+          if seed.nil? || seed == '' || always_return_sentence
             return respond # try again
           else
+            Porker.logger.info("Only one word response, not good enough. #{sentence}")
             return Sentence.failure
           end
         end
 
         # ok, we've got two words, that's a decent showing.
-        sentence << second_word
-        while sentence.length < MAXIMUM_SENTENCE_LENGTH
+        sentence << followup
+        word = followup
+        while sentence.incomplete?
           word = Transition.next(word)
-
-          # if that word ends the sentence, no more words
           break if word == Word.end
           sentence << word
         end
 
         Porker.logger.info "I am #{sentence.confidence} confident I want to say: #{sentence}"
-        return unless sentence.confidence > 1
+        return unless sentence.confidence > threshold
         sentence.to_s
       end
     end

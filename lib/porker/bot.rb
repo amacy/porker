@@ -14,16 +14,17 @@ HELP
       new do
 
         if Porker.env == 'production'
-          @logger = Cinch::Logger::NullLogger.new
+          # @logger = Cinch::Logger::NullLogger.new
         end
 
         configure do |c|
-          c.server   = Porker.env == 'production' ? "irc.colo" : "mjw.dev"
-          c.ssl      = false
+          pass = "#{ENV['PORKER_USERNAME']} #{ENV['PORKER_PASSWORD']}"
           c.port     = 6697
-          c.password = "thebananaistasty"
-          c.nick     = Porker.env == 'production' ? "porker" : "porkie"
-          c.channels = Porker.env == 'production' ? ["#sfops","#doa","#trojan"] : ["#testingzone"]
+          c.ssl.use  = true #Porker.env == 'production'
+          c.server   = Porker.env == 'production' ? "irc.flowdock.com" : "irc.freenode.net"
+          c.password = Porker.env == 'production' ? pass : "thebananaistasty"
+          c.nick     = Porker.env == 'production' ? "porker" : "porkr"
+          c.channels = Porker.env == 'production' ? [] : []
         end
 
         on :channel, "!help" do |m|
@@ -35,9 +36,9 @@ HELP
         end
 
         on :channel, /^[^!]/ do |m|
-          Porker::Markovator.store(m.message)
-          response = Porker::Markovator.respond(m.message)
+          response = Porker::Markovator.respond(m.message, false, 0.9)
           m.reply response unless response.nil?
+          Porker::Markovator.store(m.message)
         end
 
         on :private, "!redeploy" do |m|

@@ -2,6 +2,8 @@ module Porker
   class Sentence
     attr_reader :words
 
+    MAXIMUM_SENTENCE_LENGTH = 50
+
     def initialize(words = [])
       @words = [*words] || []
     end
@@ -12,6 +14,10 @@ module Porker
 
     def length
       words.length
+    end
+
+    def incomplete?
+      !complete? && length < MAXIMUM_SENTENCE_LENGTH
     end
 
     def complete?

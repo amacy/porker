@@ -31,6 +31,10 @@ module Porker
       Transition.delete(word, self)
     end
 
+    def end?
+      text == '__END__'
+    end
+
     def invalid?
       text =~ /[^a-zA-Z0-9\'_-]/ || blank?
     end
