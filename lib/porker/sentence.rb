@@ -25,9 +25,12 @@ module Porker
     end
 
     def confidence
-      score = 0
-      words.each{|word| score += word.confidence.to_i }
-      score / words.length.to_f
+      selected = 0; possible = 0;
+      words.each do |word|
+        selected += word.confidence || 1
+        possible += word.pool || 1
+      end
+      selected / possible.to_f
     end
 
     def to_s

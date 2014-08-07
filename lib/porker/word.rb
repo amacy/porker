@@ -1,10 +1,11 @@
 module Porker
   class Word
-    attr_reader :text, :confidence
+    attr_reader :text, :confidence, :pool
 
-    def initialize(text, confidence = nil)
+    def initialize(text, confidence = nil, pool = nil)
       @text = text.to_s.strip.gsub(/[?!,.]$/,'')
       @confidence = confidence
+      @pool = pool
     end
 
     def self.start
@@ -48,7 +49,11 @@ module Porker
     end
 
     def ==(word)
-      text == word.text
+      if word.is_a?(Word)
+        text == word.text
+      else
+        text == word
+      end
     end
   end
 end

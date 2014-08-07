@@ -16,7 +16,7 @@ module Porker
     end
 
     def next
-      Porker.logger.info "Candidates for #{word}: #{candidates.keys.join(",")}"
+      Porker.logger.info "#{word}:#{word.confidence}:#{word.pool} - #{ candidates.map{|k,v| "#{k}:#{v}" } }"
 
       if !exclude_end && (candidates.empty?)
         Porker.logger.warn "No candidates for word: #{word} (not even #{Word.end})"
@@ -25,16 +25,14 @@ module Porker
 
       weighted_randoms = candidates.collect{|k,v| [k] * v.to_i }.flatten
       selected = weighted_randoms[rand(weighted_randoms.length)]
-      Word.new selected, candidates[selected]
+      Word.new selected, candidates[selected], weighted_randoms.length
     end
 
-    def self.increment(word, next_word)
-      # Porker.logger.info "[INCREMENT] #{next_word.text} follows #{word}"
-      Porker.store.zincrby("porker/markovator/words/#{word.text}", 1, next_word.text)
+    def self.increment(word, next_word, amount = 1)
+      Porker.store.zincrby("porker/markovator/words/#{word.text}", amount, next_word.text)
     end
 
     def self.delete(word, next_word)
-      # Porker.logger.info "[DELETE]    #{next_word.text} never follows #{word}"
       Porker.store.zrem("porker/markovator/words/#{word.text}", next_word.text)
     end
 
@@ -54,7 +52,7 @@ module Porker
         end
 
         filter = {}
-        options.keys.sort.first(5).each do |weight|
+        options.keys.sort{|x,y| y <=> x }.first(10).each do |weight|
           options[weight].each do |candidate|
             filter = filter.merge(candidate => weight)
           end

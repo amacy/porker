@@ -4,6 +4,7 @@ module Porker
   autoload :Bot,        'porker/bot'
   autoload :Markovator, 'porker/markovator'
   autoload :Config,     'porker/config'
+  autoload :Library,    'porker/library'
   autoload :Sentence,   'porker/sentence'
   autoload :Transition, 'porker/transition'
   autoload :Word,       'porker/word'

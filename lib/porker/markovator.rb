@@ -17,7 +17,6 @@ module Porker
         end
 
         previous_word.preceeds Word.end unless previous_word == Word.start
-        true
       end
 
       def command(seed)
@@ -25,7 +24,7 @@ module Porker
         Porker::Markovator.respond(word)
       end
 
-      def respond(seed = nil, always_return_sentence = false, threshold=1.0)
+      def respond(seed = nil, always_return_sentence = false)
         Porker.logger.info("Heard: #{seed}")
         always_return_sentence = true if seed.split.include?('pork')
         word = Word.new((seed && seed.split.sample) || Transition.seed)
@@ -57,7 +56,7 @@ module Porker
         end
 
         Porker.logger.info "I am #{sentence.confidence} confident I want to say: #{sentence}"
-        return unless sentence.confidence > threshold
+        return unless sentence.confidence > Porker.config.threshold
         sentence.to_s
       end
     end
