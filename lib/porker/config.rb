@@ -6,13 +6,14 @@ module Porker
   class Config
     include Singleton
 
-    attr_accessor :dir, :env, :logger, :store, :threshold
+    attr_accessor :dir, :env, :logger, :store, :threshold, :max_length
 
     @@defaults = {
       env: 'production',
       dir: '/u/beau/porker/current',
       logger: Logger.new("./log/porker.log"),
       threshold: 0.1,
+      max_length: 10,
       store: Redis.new(:db => 1)
     }
 
