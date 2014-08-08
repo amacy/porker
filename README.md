@@ -18,7 +18,7 @@ Or install it yourself as:
 
 ## Usage
 
-bundle exec script/start
+    bundle exec script/start
 
 ## Contributing
 
